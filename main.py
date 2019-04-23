@@ -1,88 +1,66 @@
-from flask import Flask, request
-import cgi
+from flask import Flask, request, render_template, redirect
 
 app = Flask(__name__)
 app.config['DEBUG'] = True
+@app.route("/")
 
-page_header = """
-    <!DOCTYPE html>
-
-    <html>
-        <head>
-            <link rel="stylesheet" href="/static/app.css" />
-            
-        </head>
-        <body>
-        <h1>Signup</h1>
-    """
-
-welcome_message = """
-<h1>Welcome to my super cool page!</h1>
-<a href="/register">Register</a> """
-
-
-page_footer = """
-       </body>
-    </html>
-    """
-
-register_form = """
-<form action="/register" id="form" method="POST">
-    <h1>Register</h1>
-    <label for="username">Username</label>
-    <input type="text" name="username" id="username" value="{0}" />
-    <p class="error">{1}</p>
-    <label for="password">Password</label>
-    <input type="password" name="password" id="password" value="{2}" />
-    <p class="error">{3}</p>
-    <label for="password">Password Again</label>
-    <input type="password" name="password2" id="password2" value="{4}" />
-    <p class="error">{5}</p>
-    <button type="submit">Register</button>
-</form>
-    """
-
-
-@app.route("/", methods=['GET'])
 def index():
-    content = page_header + welcome_message + page_footer
-    return content
+    return render_template('entry_form.html')
+
 
 @app.route("/register", methods=['POST'])
 def register():
-    username = cgi.escape(request.form['username'])
-    password = cgi.escape(request.form['password'])
-    password2 = cgi.escape(request.form['password2'])
-
+    
+   # return render_template('entry_form.html')
+    
     usernameError =""
+    emailError =""
     passwordError = ""
     password2Error =""
+    user_space = ''
+       
+    username = request.form['username']
+    email = request.form['email']
+    password = request.form['password']
+    password2 = request.form['password2']
 
-    if username == "":
+    print(username, password)
+    if not username:
         usernameError = 'Please enter a Username'
-    if password == "":
-        passwordError = 'Please enter a Username'        
-    if password2 == "":
-        password2Error = 'Please enter a Username'
+        
+    elif user_space == '':
+        for x in username:
+            if x == ' ':
+                usernameError = 'Username must not contain spaces'
+        for x in password:
+            if x == ' ':
+                passwordError = 'Password must not contain spaces'
+        
     if len(username) < 3 or len(username) > 20:
         usernameError = 'Username must be between 3 and 20 characters'
+
+    if email != "" and len(email) < 3 or len(email) > 20:
+        emailError = 'Not a valid email'
+    elif email != "" and ("." not in email or "@" not in email):
+        emailError = 'Not a valid email'
+
+    if password == "":
+        passwordError = 'Please enter a Password'        
+    
+    elif password2 == "":
+        password2Error = 'Please confirm your Password'
+        
+    
+    elif password != password2:
+        passwordError = 'Your passwords must match!'
+
+    if usernameError or emailError or passwordError or password2Error:
+        return render_template('entry_form.html', username=username, usernameError=usernameError, 
+        passwordError=passwordError, password2Error=password2Error, email=email, emailError=emailError)
         
 
-    if usernameError or passwordError or password2Error:
-        print("there was an error!")
-        content = page_header + register_form.format(username, usernameError, 
-        password, passwordError, password2, password2Error) + page_footer
-        return content
-   
-
-    return "Thanks for registering, " + username
-
-@app.route("/register", methods=['GET'])
-def register_page():
-    # build the response string
-    content = page_header + register_form.format("", "", "", "", "", "") + page_footer
-    return content
-
-
+    return render_template('greeting.html', username=username, 
+    usernameError=usernameError, passwordError=passwordError,
+    password2Error=password2Error, email=email, emailError=emailError)
 
 app.run()    

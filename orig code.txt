@@ -1,0 +1,56 @@
+username = cgi.escape(request.form['username'])
+    email = cgi.escape(request.form['email'])
+    password = cgi.escape(request.form['password'])
+    password2 = cgi.escape(request.form['password2'])
+
+    usernameError =""
+    emailError =""
+    passwordError = ""
+    password2Error =""
+    user_space = ''
+    if not username:
+        usernameError = 'Please enter a Username'
+        
+    elif user_space == '':
+        for x in username:
+            if x == ' ':
+                usernameError = 'Username must not contain spaces'
+        for x in password:
+            if x == ' ':
+                passwordError = 'Password must not contain spaces'
+        
+    if len(username) < 3 or len(username) > 20:
+        usernameError = 'Username must be between 3 and 20 characters'
+
+    if not email:
+        emailError='Please enter an email address.'
+    else:
+        email_contain1 = False
+        email_contain2 = False
+        for x in email:
+            if x == '@':
+                email_contain1 == True
+            if x == '.':    
+                email_contain2 == True  
+        if email_contain1 == True or email_contain2 == True: 
+            emailError='Your email must contain a . and an @ symbol'          
+            email = ''
+    if password == "":
+        passwordError = 'Please enter a Password'        
+    
+    elif password2 == "":
+        password2Error = 'Please confirm your Password'
+        
+    
+    elif password != password2:
+        passwordError = 'Your passwords must match!'
+
+    if usernameError or emailError or passwordError or password2Error:
+        content = page_header + register_form.format(username, usernameError, 
+        email, emailError, "", passwordError, "", password2Error) + page_footer
+        return content
+   
+    return render_template('signup_form.html', title=title, username=username, 
+                           username_error=username_error, password1_error=password1_error,
+                           password2_error=password2_error, email=email, email_error=email_error)
+    # return "Thanks for registering, " + username

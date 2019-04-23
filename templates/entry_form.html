@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            .error { color: red;}
+        </style>
+    </head>
+    <body>
+        <form action="/register" id="form" method="POST">
+            <h1>Register</h1>
+            <label for="username">Username</label>
+            <input type="text" name="username" id="username" value="{{username}}" />
+            <p class="error">{{usernameError}}</p>
+                       
+            <label for="email">Email</label>
+            <input type="text" name="email" id="email" value="{{email}}" />
+            <p class="error">{{emailError}}</p>
+            
+            <label for="password">Password</label>
+            <input type="password" name="password" id="password" value="{{password}}" />
+            <p class="error">{{passwordError}}</p>
+            
+            <label for="password">Confirm Password</label>
+            <input type="password" name="password2" id="password2" value="{{password2}}" />
+            <p class="error">{{password2Error}}</p>
+            <button type="submit">Register</button>
+
+
+        </form>
+    </body>
+</html>
